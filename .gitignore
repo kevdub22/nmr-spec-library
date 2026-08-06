@@ -1,0 +1,11 @@
+# Local Netlify folder
+.netlify
+.env
+node_modules
+deno.lock
+
+# macOS
+.DS_Store
+
+# Claude Code local permission cache (session-specific, not project config)
+.claude/settings.local.json

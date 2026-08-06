@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Spec Sheet Library — NMR Events</title>
+<meta name="description" content="Browse and export hardware spec sheets." />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="topbar">
+  <div class="brand">
+    <img src="assets/nmr-logo.svg" alt="NMR Events" />
+  </div>
+  <button class="cart-toggle" id="cartToggle" aria-haspopup="dialog" aria-controls="manifest">
+    <span>CART</span>
+    <span class="count" id="cartCount">0</span>
+  </button>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <span class="eyebrow">NMR Events</span>
+      <h1>Spec Sheet Library</h1>
+      <p>Browse NMR's hardware spec sheets, add what you need to your cart, and export a single combined PDF to send along.</p>
+    </div>
+    <div class="hero-actions">
+      <button class="btn ghost" id="fullCatalogBtn">Download Full Catalog (PDF)</button>
+      <div class="export-status" id="fullCatalogStatus"></div>
+    </div>
+  </div>
+</section>
+
+<main id="main">
+  <div class="controls">
+    <input type="search" class="search-input" id="searchInput" placeholder="Search by name, model, or tag…" aria-label="Search spec sheets" />
+    <div id="categoryChips" role="group" aria-label="Filter by category"></div>
+    <div id="tagChips" role="group" aria-label="Filter by tag"></div>
+    <div class="view-toggle" role="group" aria-label="View mode">
+      <button class="view-btn" id="viewGridBtn" aria-pressed="true" aria-label="Card view" title="Card view">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.4"/><rect x="9" y="1" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.4"/><rect x="1" y="9" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.4"/><rect x="9" y="9" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.4"/></svg>
+      </button>
+      <button class="view-btn" id="viewListBtn" aria-pressed="false" aria-label="List view" title="List view">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="2" width="14" height="2.4" rx="1" fill="currentColor"/><rect x="1" y="6.8" width="14" height="2.4" rx="1" fill="currentColor"/><rect x="1" y="11.6" width="14" height="2.4" rx="1" fill="currentColor"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <section class="grid" id="grid" aria-live="polite">
+    <p class="empty-state">Loading spec sheets…</p>
+  </section>
+</main>
+
+<footer class="site-footer">NMR Events — Spec Sheet Library</footer>
+
+<div class="manifest-overlay" id="manifestOverlay"></div>
+<aside class="manifest" id="manifest" role="dialog" aria-modal="true" aria-labelledby="manifestTitle">
+  <div class="manifest-header">
+    <div class="ticket-label">Cart</div>
+    <h2 id="manifestTitle">Your Selection</h2>
+    <button class="manifest-close" id="manifestClose" aria-label="Close manifest">✕</button>
+  </div>
+  <div class="manifest-list" id="manifestList">
+    <p class="manifest-empty">No spec sheets added yet. Browse the library and add sheets to build your export.</p>
+  </div>
+  <div class="manifest-footer">
+    <div class="manifest-totals">
+      <span>SHEETS <strong id="totalSheets">0</strong></span>
+      <span>PAGES <strong id="totalPages">0</strong></span>
+    </div>
+    <button class="btn primary" id="exportBtn" style="width:100%" disabled>Export Combined PDF</button>
+    <div class="export-status" id="exportStatus"></div>
+  </div>
+</aside>
+
+<script src="js/catalog.js"></script>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Manage Library — NMR Events</title>
+<meta name="robots" content="noindex" />
+<link rel="stylesheet" href="css/style.css" />
+<style>
+  .wrap { max-width: 900px; margin: 0 auto; padding: 28px; }
+  .gate { max-width: 360px; margin: 15vh auto; text-align: center; }
+  .gate img { height: 40px; margin-bottom: 18px; }
+  .gate input { width: 100%; margin: 16px 0; }
+  .panel {
+    background: var(--navy-panel); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 20px; margin-bottom: 20px;
+  }
+  .panel h2 { font-size: 20px; margin-bottom: 14px; }
+  label { display: block; font-size: 11px; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.06em; margin: 12px 0 6px; }
+  input[type=text], input[type=password], input[type=file] {
+    width: 100%; background: var(--navy-panel-raised); border: 1px solid var(--border); color: var(--text);
+    padding: 10px 12px; border-radius: var(--radius); font-size: 14px; font-family: inherit;
+  }
+  .row { display: flex; gap: 12px; }
+  .row > div { flex: 1; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--border); }
+  th { color: var(--text-faint); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .status { font-size: 12px; margin-top: 10px; min-height: 1.2em; color: var(--text-faint); }
+  .status.error { color: var(--danger); }
+  .status.success { color: var(--teal); }
+  .small-btn { padding: 5px 10px; font-size: 11px; }
+  .dropzone {
+    border: 2px dashed var(--border-bright);
+    border-radius: var(--radius);
+    padding: 28px 16px;
+    text-align: center;
+    cursor: pointer;
+    background: var(--navy-panel-raised);
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+  .dropzone:hover, .dropzone:focus-visible { border-color: var(--teal); }
+  .dropzone.dragover { border-color: var(--teal); background: rgba(71, 178, 204, 0.1); }
+  .dropzone-text strong { display: block; font-size: 14px; color: var(--text); }
+  .dropzone-text span { display: block; font-size: 12px; color: var(--text-faint); margin-top: 4px; }
+  .dropzone-files { margin-top: 14px; text-align: left; font-size: 12.5px; color: var(--text-dim); }
+  .dropzone-files .file-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid var(--border); }
+  .category-group { border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 10px; overflow: hidden; }
+  .category-group summary {
+    cursor: pointer; padding: 12px 14px; background: var(--navy-panel-raised);
+    display: flex; align-items: center; justify-content: space-between;
+    font-weight: 600; font-size: 14px; list-style: none;
+  }
+  .category-group summary::-webkit-details-marker { display: none; }
+  .category-group summary .chevron { color: var(--text-faint); font-size: 12px; transition: transform 0.15s ease; }
+  .category-group[open] summary .chevron { transform: rotate(90deg); }
+  .category-group summary .count-badge { color: var(--text-faint); font-weight: 400; font-size: 12px; margin-left: 8px; }
+  .category-group table { margin: 0; table-layout: fixed; width: 100%; }
+  .category-group th, .category-group td { padding: 10px 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .category-group th:nth-child(1), .category-group td:nth-child(1) { width: 30%; }
+  .category-group th:nth-child(2), .category-group td:nth-child(2) { width: 16%; }
+  .category-group th:nth-child(3), .category-group td:nth-child(3) { width: 22%; }
+  .category-group th:nth-child(4), .category-group td:nth-child(4) { width: 12%; }
+  .category-group th:nth-child(5), .category-group td:nth-child(5) { width: 20%; white-space: nowrap; }
+  .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  @media (max-width: 720px) {
+    /* Fixed % columns crush to nothing on narrow screens — give the table a floor
+       width and let it scroll horizontally instead of truncating every field. */
+    .category-group table { min-width: 640px; }
+  }
+  .category-group td:nth-child(1), .category-group td:nth-child(2), .category-group td:nth-child(3) { white-space: normal; }
+</style>
+</head>
+<body>
+
+<div id="gate" class="gate">
+  <img src="assets/nmr-logo.svg" alt="NMR Events" />
+  <h1>Admin Access</h1>
+  <p style="color:var(--text-dim); font-size:14px;">Enter the admin key to manage the spec sheet library.</p>
+  <input type="password" id="adminKeyInput" placeholder="Admin key" />
+  <button class="btn primary" id="unlockBtn" style="width:100%">Unlock</button>
+  <p class="status error" id="gateError"></p>
+</div>
+
+<div id="app" style="display:none">
+  <header class="topbar">
+    <div class="brand">
+      <img src="assets/nmr-logo.svg" alt="NMR Events" />
+      <span class="brand-sub">Admin</span>
+    </div>
+    <a href="index.html" class="btn ghost">View Public Library →</a>
+  </header>
+
+  <div class="wrap">
+    <section class="panel">
+      <h2>Upload Spec Sheet</h2>
+      <form id="uploadForm">
+        <label for="title">Title <span style="text-transform:none; color:var(--text-faint)">(only used when uploading a single file — bulk uploads use each PDF's filename)</span></label>
+        <input type="text" id="title" placeholder="e.g. Shure SM7B Dynamic Microphone" />
+        <div class="row">
+          <div>
+            <label for="category">Category <span style="text-transform:none; color:var(--text-faint)">(applied to all files in this batch)</span></label>
+            <input type="text" id="category" placeholder="e.g. Audio" />
+          </div>
+          <div>
+            <label for="tags">Tags <span style="text-transform:none; color:var(--text-faint)">(comma separated, applied to all)</span></label>
+            <input type="text" id="tags" placeholder="e.g. mic, shure, dynamic" />
+          </div>
+        </div>
+        <label for="file">PDF File(s)</label>
+        <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Drag and drop PDF files here, or click to browse">
+          <div class="dropzone-text">
+            <strong>Drag PDFs here</strong>
+            <span>or click to browse</span>
+          </div>
+          <div class="dropzone-files" id="dropzoneFiles"></div>
+          <input type="file" id="file" accept="application/pdf" multiple required style="display:none" />
+        </div>
+        <button class="btn primary" type="submit" style="margin-top:16px">Upload</button>
+        <p class="status" id="uploadStatus"></p>
+      </form>
+    </section>
+
+    <section class="panel">
+      <h2>Current Library (<span id="itemCount">0</span>)</h2>
+      <button class="btn ghost small-btn" id="fullCatalogBtn">Download Full Catalog (PDF)</button>
+      <p class="status" id="fullCatalogStatus"></p>
+      <div id="itemRows"></div>
+    </section>
+  </div>
+</div>
+
+<script src="js/admin.js"></script>
+</body>
+</html>
