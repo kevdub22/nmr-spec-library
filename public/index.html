@@ -5,6 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Spec Sheet Library — NMR Events</title>
 <meta name="description" content="Browse and export hardware spec sheets." />
+
+<!-- Favicons. The .ico lives at the web root for bare /favicon.ico requests
+     that browsers make without consulting the markup. -->
+<link rel="icon" href="/favicon.ico" sizes="any" />
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16.png" />
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
+
+<!-- PWA -->
+<link rel="manifest" href="/manifest.webmanifest" />
+<meta name="theme-color" content="#081f42" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="NMR Specs" />
+
 <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -77,5 +92,16 @@
 </aside>
 
 <script src="js/catalog.js"></script>
+<script>
+  /* Registered after load so the SW install never competes with the first
+     render or the catalog fetch for bandwidth. */
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("/sw.js").catch((err) => {
+        console.warn("Service worker registration failed:", err);
+      });
+    });
+  }
+</script>
 </body>
 </html>
