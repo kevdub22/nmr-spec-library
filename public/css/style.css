@@ -111,17 +111,30 @@ button { font-family: inherit; cursor: pointer; }
 
 /* ---------- Hero (technical-drawing plate behind the headline) ---------- */
 /* The image is a wide, short plate whose drawings sit in its right ~56%, with
-   open dark space on the left. It's sized by WIDTH (`72% auto`) rather than
-   with `cover`, so the drawings land at a fixed ~60% across at every viewport
-   instead of growing with the band and creeping under the headline. The band's
-   height is then driven purely by the text. The plate's own background is
-   #0f101e — a hair off --bg (#10101e) — so its edges disappear into the page
-   and the gradient only has to feather the left edge as light insurance at odd
-   widths. Paths are relative to this stylesheet (public/css/), hence the ../ */
+   open dark space on the left.
+
+   Sized by WIDTH rather than with `cover`: cover scaled the plate to fill the
+   band, so it sprawled left under the headline and got worse as the band grew.
+   Width-sizing keeps the drawings at a stable spot across viewports and lets
+   the band's height be driven purely by the text.
+
+   Anchored to the CONTENT edge, not the viewport edge, so its right edge lines
+   up with the card grid below it exactly as the headline lines up with the
+   grid's left edge. Both .hero-inner and .grid are max-width:1400 + 28px
+   padding, so that edge sits max(28px, 50vw - 672px) in from the right
+   (672px = 1400/2 - 28). The offset uses vw, not %, on purpose: percentages in
+   a background-position offset resolve against (area - image), not the area,
+   which would not track the container.
+
+   The plate's own background is #0f101e — a hair off --bg (#10101e) — so its
+   edges disappear into the page, and the gradient only has to feather the left
+   edge as insurance where the copy runs long. Paths are relative to this
+   stylesheet (public/css/), hence the ../ */
 .hero {
   position: relative;
   padding: 34px 0;
-  background:
+  background-color: var(--bg);
+  background-image:
     linear-gradient(
       90deg,
       var(--bg) 0%,
@@ -130,9 +143,35 @@ button { font-family: inherit; cursor: pointer; }
       rgba(16, 16, 30, 0.1) 57%,
       rgba(16, 16, 30, 0) 65%
     ),
-    url('../assets/hero.png') right center / 72% auto no-repeat,
-    var(--bg);
+    url('../assets/hero.png');
+  background-repeat: no-repeat, no-repeat;
+  background-position:
+    left top,
+    right max(28px, calc(50vw - 672px)) top 50%;
+  background-size:
+    auto,
+    72% auto;
   border-bottom: 1px solid var(--border);
+}
+/* Wide screens have room to scale the plate up and let it sit further in from
+   the right. Below this the copy column gets close enough to the drawings that
+   a bigger plate would run under the paragraph, so the smaller size holds. */
+@media (min-width: 1200px) {
+  .hero {
+    background-image:
+      linear-gradient(
+        90deg,
+        var(--bg) 0%,
+        var(--bg) 34%,
+        rgba(16, 16, 30, 0.45) 44%,
+        rgba(16, 16, 30, 0.08) 54%,
+        rgba(16, 16, 30, 0) 62%
+      ),
+      url('../assets/hero.png');
+    background-size:
+      auto,
+      min(80%, 1200px) auto;
+  }
 }
 .hero-inner {
   max-width: 1400px;
