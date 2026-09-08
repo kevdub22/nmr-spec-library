@@ -109,29 +109,46 @@ button { font-family: inherit; cursor: pointer; }
   text-align: center;
 }
 
-/* ---------- Hero (atmospheric gradient — brand background system) ---------- */
+/* ---------- Hero (technical-drawing plate behind the headline) ---------- */
+/* The image is a wide, short plate whose drawings sit in its right ~56%, with
+   open dark space on the left. It's sized by WIDTH (`72% auto`) rather than
+   with `cover`, so the drawings land at a fixed ~60% across at every viewport
+   instead of growing with the band and creeping under the headline. The band's
+   height is then driven purely by the text. The plate's own background is
+   #0f101e — a hair off --bg (#10101e) — so its edges disappear into the page
+   and the gradient only has to feather the left edge as light insurance at odd
+   widths. Paths are relative to this stylesheet (public/css/), hence the ../ */
 .hero {
   position: relative;
-  padding: 32px 0;
-  background: url('assets/hero-bg.jpg') center/cover no-repeat, var(--bg);
+  padding: 34px 0;
+  background:
+    linear-gradient(
+      90deg,
+      var(--bg) 0%,
+      var(--bg) 38%,
+      rgba(16, 16, 30, 0.5) 47%,
+      rgba(16, 16, 30, 0.1) 57%,
+      rgba(16, 16, 30, 0) 65%
+    ),
+    url('../assets/hero.png') right center / 72% auto no-repeat,
+    var(--bg);
   border-bottom: 1px solid var(--border);
 }
 .hero-inner {
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 28px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
 }
+.hero-text { max-width: 620px; }
 .hero-actions {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: 8px;
-  flex-shrink: 0;
+  margin-top: 18px;
 }
+/* .btn defaults to flex:1; keep the catalog button sized to its own label. */
+.hero-actions .btn { flex: 0 0 auto; }
 .eyebrow {
   display: block;
   font-size: 11px;
@@ -506,9 +523,17 @@ footer.site-footer {
 
 @media (max-width: 640px) {
   .topbar { padding: 12px 16px; }
-  .hero { padding: 28px 0; }
-  .hero-inner { padding: 0 16px; flex-direction: column; align-items: flex-start; gap: 14px; }
-  .hero-actions { align-items: flex-start; }
+  .hero { padding: 36px 0; }
+  /* The drawings crop out of frame at this width — lean on a flat wash so the
+     headline never lands on top of a half-visible dimension line. */
+  .hero {
+    background:
+      linear-gradient(90deg, var(--bg) 0%, rgba(16, 16, 30, 0.9) 55%, rgba(16, 16, 30, 0.72) 100%),
+      url('../assets/hero.png') right center / cover no-repeat,
+      var(--bg);
+  }
+  .hero-inner { padding: 0 16px; }
+  .hero-actions { margin-top: 18px; }
   .hero-actions .export-status:empty { display: none; }
   .controls, .grid { padding-left: 16px; padding-right: 16px; }
 }
